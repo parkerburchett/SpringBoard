@@ -149,12 +149,44 @@ QUESTIONS:
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
 that there's a different cost for guests and members! */
+SELECT f.name as Facility_name, 
+                  ((count(m.memid = 0) * f.guestcost) + (count(m.memid != 0) * f.membercost)) as total_revenue
+
+            FROM `Members` as m
+            join `Bookings` as b on b.memid = m.memid
+            join `Facilities` as f on b.facid = f.facid
+
+            group by f.name
+			      HAVING total_revenue < 10000 
+            order by total_revenue desc;
+
+-- I could not figure out this question. 
 
 /* Q11: Produce a report of members and who recommended them in alphabetic surname,firstname order */
-
+select 
+                        concat(firstname, ' ', surname) as member_name,
+                        group_concat(recommendedby, ',') as rec_ids
+                        from Members 
+                        group by member_name;
 
 /* Q12: Find the facilities with their usage by member, but not guests */
+SELECT f.name as Facility_name, 
+                count(b.bookid) as member_usage
 
+            FROM `Members` as m
+            join `Bookings` as b on b.memid = m.memid
+            join `Facilities` as f on b.facid = f.facid
+            where m.memid !=0
+            Group by Facility_name;
 
 /* Q13: Find the facilities usage by month, but not guests */
 
+          SELECT strftime('%m', b.starttime) as Month, 
+                 count(b.bookid) as member_usage 
+
+            FROM `Members` as m
+            join `Bookings` as b on b.memid = m.memid
+            join `Facilities` as f on b.facid = f.facid
+
+            where m.memid !=0
+            Group by Month
