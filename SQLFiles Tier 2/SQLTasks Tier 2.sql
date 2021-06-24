@@ -169,6 +169,17 @@ select
                         from Members 
                         group by member_name;
 
+
+                        q11_query = "SELECT 
+                        (surname || ', ' || firstname) AS member, 
+                            (SELECT (surname || ', ' || firstname) 
+                            FROM 
+                            Members 
+                            WHERE 
+                            Members.memid = m.recommendedby) 
+                        
+                        AS recommender FROM Members AS m ORDER BY member"
+
 /* Q12: Find the facilities with their usage by member, but not guests */
 SELECT f.name as Facility_name, 
                 count(b.bookid) as member_usage
